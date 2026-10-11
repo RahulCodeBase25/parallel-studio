@@ -1,0 +1,73 @@
+---
+import { getCollection, render } from 'astro:content'
+import Base from '../../layouts/Base.astro'
+import Poster from '../../components/Poster.astro'
+
+export async function getStaticPaths() {
+  const work = (await getCollection('work')).sort((a, b) => a.data.order - b.data.order)
+  return work.map((entry, i) => ({ params: { slug: entry.id }, props: { entry, next: work[(i + 1) % work.length] } }))
+}
+
+const { entry, next } = Astro.props
+const { Content } = await render(entry)
+const d = entry.data
+---
+<Base title={`${d.client}: ${d.title} — Parallel`} description={d.title}>
+  <article class="case" style={`--accent:${d.theme.accent};--case-bg:${d.theme.bg};--case-fg:${d.theme.fg}`}>
+    <Poster client={d.client} platform={d.platform} theme={d.theme} slug={entry.id} size="hero" />
+
+    <header class="case__head wrap">
+      <h1 class="display">{d.title}</h1>
+      <dl class="case__facts">
+        <div><dt>Client</dt><dd>{d.client}</dd></div>
+        <div><dt>Year</dt><dd>{d.year}</dd></div>
+        <div><dt>What we did</dt><dd>{d.services.join(', ')}</dd></div>
+      </dl>
+    </header>
+
+    <section class="case__results wrap" aria-label="Results">
+      {d.results.map((r) => (
+        <div class="result">
+          <p class="result__value display">{r.value}</p>
+          <p class="result__label">{r.label}</p>
+        </div>
+      ))}
+    </section>
+
+    <div class="case__body wrap">
+      <Content />
+    </div>
+
+    <a class="next" href={`/work/${next.id}`} data-cursor="Next case" data-surface="dark">
+      <span class="next__label">Next project</span>
+      <span class="next__name display" data-scrub-stretch>{next.data.client}</span>
+    </a>
+  </article>
+</Base>
+
+<style>
+  .case { padding-top: 0; }
+  .case :global(.poster--hero) { min-height: 70svh; aspect-ratio: auto; }
+  .case__head { display: grid; grid-template-columns: minmax(0, 1.6fr) minmax(14rem, 1fr); gap: 2rem 4rem; padding-block: clamp(3rem, 7vw, 6rem) 2rem; align-items: end; }
+  .case__head h1 { margin: 0; font-size: clamp(2.4rem, 6vw, 5.6rem); text-wrap: balance; }
+  .case__facts { margin: 0; display: grid; gap: 1rem; }
+  .case__facts div { border-top: 1px solid var(--rule); padding-top: .6rem; }
+  .case__facts dt { color: var(--muted); font-size: .9rem; }
+  .case__facts dd { margin: .2rem 0 0; font-weight: 500; }
+  @media (max-width: 800px) { .case__head { grid-template-columns: 1fr; } }
+
+  .case__results { display: grid; grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr)); gap: 1rem; padding-block: 2rem 4rem; }
+  .result { background: var(--case-bg); color: var(--case-fg); border-radius: 18px; padding: 1.6rem; }
+  .result__value { margin: 0; font-size: clamp(2.6rem, 5vw, 4.4rem); color: var(--accent); font-stretch: 120%; }
+  .result__label { margin: .6rem 0 0; max-width: 24ch; }
+
+  .case__body { max-width: 46rem; margin-inline: auto; padding-bottom: clamp(4rem, 10vw, 8rem); font-size: 1.2rem; line-height: 1.65; }
+  .case__body :global(h2) { font: 700 clamp(1.7rem, 3vw, 2.4rem)/1.1 var(--display); font-stretch: 115%; margin: 3rem 0 1rem; }
+  .case__body :global(p) { margin: 0 0 1.1rem; }
+  .case__body :global(strong) { background: linear-gradient(transparent 60%, var(--lilac) 60%); }
+
+  .next { display: block; text-decoration: none; background: var(--ink); color: var(--paper); padding: clamp(3rem, 8vw, 6rem) var(--pad); }
+  .next__label { display: block; color: var(--lilac); margin-bottom: 1rem; }
+  .next__name { display: block; font-size: clamp(3.5rem, 14vw, 14rem); transition: color .3s; }
+  .next:hover .next__name { color: var(--lilac); }
+</style>

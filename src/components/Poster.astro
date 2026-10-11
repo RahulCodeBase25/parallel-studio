@@ -1,0 +1,109 @@
+---
+// A case-study cover drawn in HTML/CSS: the client's palette, their name set
+// large, and a small mock of the product (phone, web page or dashboard).
+interface Props {
+  client: string
+  platform: 'mobile' | 'web' | 'dashboard'
+  theme: { bg: string; fg: string; accent: string; surface: string }
+  slug: string
+  size?: 'card' | 'hero'
+}
+const { client, platform, theme, slug, size = 'card' } = Astro.props
+const vars = `--bg:${theme.bg};--fg:${theme.fg};--ac:${theme.accent};--sf:${theme.surface}`
+---
+<div class:list={['poster', `poster--${size}`, `poster--${platform}`]} style={vars} transition:name={`poster-${slug}`} data-surface={size === 'hero' && !['kiln'].includes(slug) ? 'dark' : undefined}>
+  <span class="poster__name display" aria-hidden="true">{client}</span>
+
+  {platform === 'mobile' && (
+    <div class="phone" aria-hidden="true">
+      <div class="phone__notch"></div>
+      <div class="phone__screen">
+        <p class="m-small">Today</p>
+        <p class="m-big">{slug === 'mira' ? '10:42' : '$1,284'}</p>
+        <p class="m-small">{slug === 'mira' ? 'Rain on a tin roof · 45 min' : 'safe to spend'}</p>
+        <div class="m-ring"><span></span></div>
+        <div class="m-row"><i></i><b></b><em></em></div>
+        <div class="m-row"><i></i><b></b><em></em></div>
+        <div class="m-row"><i></i><b></b><em></em></div>
+      </div>
+    </div>
+  )}
+
+  {platform === 'web' && (
+    <div class="browser" aria-hidden="true">
+      <div class="browser__bar"><i></i><i></i><i></i></div>
+      <div class="browser__body">
+        <div class="w-hero"><span></span><span></span><span class="w-btn"></span></div>
+        <div class="w-grid">{Array.from({ length: 6 }).map((_, i) => <div class="w-card" style={`--h:${[62, 80, 55, 74, 66, 58][i]}%`}><span></span></div>)}</div>
+      </div>
+    </div>
+  )}
+
+  {platform === 'dashboard' && (
+    <div class="dash" aria-hidden="true">
+      <div class="dash__side">{Array.from({ length: 5 }).map(() => <i></i>)}</div>
+      <div class="dash__main">
+        <div class="dash__map">
+          <svg viewBox="0 0 200 110" preserveAspectRatio="none"><path d="M10 90 C 50 20, 90 100, 130 40 S 180 30, 195 15" fill="none" stroke="var(--ac)" stroke-width="2" stroke-dasharray="4 4" /><circle cx="130" cy="40" r="5" fill="var(--ac)" /><circle cx="10" cy="90" r="3" fill="var(--fg)" /><circle cx="195" cy="15" r="3" fill="var(--fg)" /></svg>
+        </div>
+        <div class="dash__rows">{[88, 64, 92, 40].map((w, i) => <div class="dash__row"><span style={`width:${w}%`} class:list={[i === 3 && 'is-late']}></span></div>)}</div>
+      </div>
+    </div>
+  )}
+</div>
+
+<style>
+  .poster {
+    position: relative; overflow: hidden; isolation: isolate;
+    aspect-ratio: 16 / 10; border-radius: 18px;
+    background: var(--bg); color: var(--fg);
+    display: grid; place-items: center;
+  }
+  .poster--hero { aspect-ratio: 16 / 8; border-radius: 0; }
+  .poster__name {
+    position: absolute; left: 4%; bottom: -2%; z-index: -1;
+    font-size: clamp(3rem, 16vw, 15rem); color: var(--sf); white-space: nowrap; font-stretch: 140%;
+  }
+  .poster--card .poster__name { font-size: clamp(3rem, 11vw, 11rem); }
+
+  /* Phone */
+  .phone { width: 27%; aspect-ratio: 9 / 19; background: #05070b; border-radius: 13% / 6%; padding: 3.2%; box-shadow: 0 30px 60px -20px rgb(0 0 0 / .5); translate: 0 6%; transition: translate .7s var(--ease-out); }
+  .phone__notch { width: 34%; height: 2.2%; background: #05070b; border-radius: 0 0 8px 8px; margin: 0 auto -2.2%; position: relative; z-index: 1; }
+  .phone__screen { height: 100%; border-radius: 11% / 5%; background: var(--sf); padding: 14% 9% 0; display: flex; flex-direction: column; gap: .35em; font-size: clamp(5px, .8vw, 11px); overflow: hidden; }
+  .m-small { margin: 0; opacity: .7; }
+  .m-big { margin: 0; font: 700 3.2em/1 var(--display); font-stretch: 110%; color: var(--ac); }
+  .m-ring { width: 62%; aspect-ratio: 1; margin: 1.4em auto; border-radius: 50%; border: .7em solid rgb(255 255 255 / .08); border-top-color: var(--ac); border-right-color: var(--ac); }
+  .m-row { display: flex; align-items: center; gap: .7em; padding: .7em 0; border-top: 1px solid rgb(255 255 255 / .08); }
+  .m-row i { width: 1.8em; height: 1.8em; border-radius: 50%; background: var(--ac); opacity: .7; }
+  .m-row b { flex: 1; height: .55em; border-radius: 4px; background: var(--fg); opacity: .25; }
+  .m-row em { width: 20%; height: .55em; border-radius: 4px; background: var(--fg); opacity: .5; }
+
+  /* Browser */
+  .browser { width: 70%; aspect-ratio: 16 / 10; background: var(--sf); border-radius: 10px; overflow: hidden; box-shadow: 0 30px 70px -25px rgb(0 0 0 / .35); translate: 0 8%; transition: translate .7s var(--ease-out); }
+  .browser__bar { display: flex; gap: 5px; padding: 2.2% 2.5%; background: rgb(0 0 0 / .06); }
+  .browser__bar i { width: 7px; height: 7px; border-radius: 50%; background: rgb(0 0 0 / .18); }
+  .browser__body { padding: 4% 5%; display: grid; gap: 6%; }
+  .w-hero { display: grid; gap: 4px; }
+  .w-hero span { height: 9px; width: 55%; background: var(--fg); border-radius: 3px; }
+  .w-hero span:nth-child(2) { width: 35%; opacity: .4; height: 6px; }
+  .w-btn { width: 14% !important; height: 12px !important; background: var(--ac) !important; border-radius: 99px !important; margin-top: 4px; }
+  .w-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 4%; }
+  .w-card { aspect-ratio: 4 / 5; border-radius: 6px; background: color-mix(in srgb, var(--bg) 70%, var(--ac)); position: relative; overflow: hidden; }
+  .w-card span { position: absolute; left: 50%; bottom: 0; translate: -50% 0; width: 46%; height: var(--h); border-radius: 40% 40% 12% 12% / 30% 30% 8% 8%; background: var(--ac); opacity: .85; }
+  .w-card:nth-child(even) span { background: var(--fg); opacity: .75; border-radius: 50% 50% 20% 20%; }
+
+  /* Dashboard */
+  .dash { width: 74%; aspect-ratio: 16 / 9; display: grid; grid-template-columns: 9% 1fr; background: var(--sf); border-radius: 10px; overflow: hidden; box-shadow: 0 30px 70px -25px rgb(0 0 0 / .6); translate: 0 6%; transition: translate .7s var(--ease-out); }
+  .dash__side { display: grid; align-content: start; gap: 12%; padding: 30% 22%; background: rgb(0 0 0 / .2); }
+  .dash__side i { aspect-ratio: 1; border-radius: 4px; background: var(--fg); opacity: .25; }
+  .dash__side i:first-child { background: var(--ac); opacity: 1; }
+  .dash__main { display: grid; grid-template-rows: 1.4fr 1fr; gap: 5%; padding: 4%; }
+  .dash__map { border-radius: 6px; background: radial-gradient(circle at 30% 40%, rgb(255 255 255 / .06), transparent 60%), repeating-linear-gradient(0deg, rgb(255 255 255 / .04) 0 1px, transparent 1px 14px), repeating-linear-gradient(90deg, rgb(255 255 255 / .04) 0 1px, transparent 1px 14px); }
+  .dash__map svg { width: 100%; height: 100%; }
+  .dash__rows { display: grid; gap: 10%; align-content: center; }
+  .dash__row { height: 6px; border-radius: 3px; background: rgb(255 255 255 / .06); }
+  .dash__row span { display: block; height: 100%; border-radius: 3px; background: var(--fg); opacity: .5; }
+  .dash__row .is-late { background: var(--ac); opacity: 1; }
+
+  :global(a:hover) > .poster .phone, :global(a:hover) > .poster .browser, :global(a:hover) > .poster .dash { translate: 0 0; }
+</style>

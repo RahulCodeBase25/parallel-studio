@@ -1,0 +1,169 @@
+---
+import { getCollection } from 'astro:content'
+import Base from '../layouts/Base.astro'
+import LineField from '../components/LineField.astro'
+import Poster from '../components/Poster.astro'
+
+const work = (await getCollection('work')).sort((a, b) => a.data.order - b.data.order)
+
+const services = [
+  { name: 'Product strategy', text: 'Interviews, analytics and a hard look at what you have today. You get a short written plan: who the product is for, what to build first, and what to stop doing.', items: ['User interviews', 'Competitive teardown', 'Roadmap and success metrics'] },
+  { name: 'Mobile and web apps', text: 'From first sketch to the last pixel in the App Store screenshot. We prototype in code early, so decisions get tested on real phones, not just in Figma.', items: ['iOS and Android', 'Responsive web apps', 'Interactive prototypes'] },
+  { name: 'Design systems', text: 'Components, tokens and the documentation your engineers will actually read, set up in Figma and in your codebase so they never drift apart.', items: ['Tokens and theming', 'Component library', 'Accessibility review'] },
+  { name: 'Dashboards and data', text: 'Interfaces for people who stare at them all day. We design for the exception, not the average, and use colour only when something needs attention.', items: ['Operations tools', 'Charts and maps', 'Real-time interfaces'] },
+]
+
+const steps = [
+  { title: 'Listen', time: '2 weeks', text: 'We talk to your customers and your team, read the support tickets and use the product until it annoys us. Then we write down the one problem worth solving first.' },
+  { title: 'Draw', time: '3–4 weeks', text: 'Lots of directions, quickly. Paper, Figma and throwaway code. Each Friday you see what we made and pick what survives.' },
+  { title: 'Build together', time: '6–12 weeks', text: 'Your engineers and our designers work in the same channel and the same repo. We hand over components, not static screens.' },
+  { title: 'Ship and stay', time: 'after launch', text: 'We watch the numbers with you for a month, fix what real users trip over, and leave your team with a system they can run without us.' },
+]
+---
+<Base>
+  <!-- Hero -->
+  <section class="hero" aria-labelledby="hero-title" data-surface="dark">
+    <LineField />
+    <div class="hero__inner wrap">
+      <h1 id="hero-title" class="hero__title display" data-hero-title>Product design for the things people use every day</h1>
+      <div class="hero__aside">
+        <p data-hero-fade>Parallel is a twelve-person studio in Dallas. We design mobile apps, web platforms and dashboards, and we stay until they ship.</p>
+        <a class="btn btn--light" href="#work" data-hero-fade>See the work</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Statement -->
+  <section class="statement wrap">
+    <p>Good products feel obvious. Getting there takes research, a lot of drawing, and engineers in the room from the first day. That's how we work, on four projects at a time.</p>
+  </section>
+
+  <!-- Work -->
+  <section id="work" class="work wrap" aria-labelledby="work-title">
+    <h2 id="work-title" class="section-title display" data-scrub-stretch>Selected work</h2>
+    <ul class="work__grid" role="list">
+      {work.map((w, i) => (
+        <li class:list={['work__item', (i === 0 || i === 3) && 'work__item--wide']}>
+          <a href={`/work/${w.id}`} data-cursor="View case">
+            <Poster client={w.data.client} platform={w.data.platform} theme={w.data.theme} slug={w.id} />
+            <div class="work__meta">
+              <h3>{w.data.client}</h3>
+              <p>{w.data.title}</p>
+              <p class="work__tags">{w.data.services.join(', ')} <span>{w.data.year}</span></p>
+            </div>
+          </a>
+        </li>
+      ))}
+    </ul>
+  </section>
+
+  <!-- Services -->
+  <section id="services" class="services wrap" aria-labelledby="services-title">
+    <h2 id="services-title" class="section-title display" data-scrub-stretch>What we do</h2>
+    <div class="services__list">
+      {services.map((s, i) => (
+        <details class="service" open={i === 0}>
+          <summary>
+            <span class="service__name display">{s.name}</span>
+            <span class="service__toggle" aria-hidden="true"></span>
+          </summary>
+          <div class="service__body">
+            <p>{s.text}</p>
+            <ul role="list">{s.items.map((it) => <li>{it}</li>)}</ul>
+          </div>
+        </details>
+      ))}
+    </div>
+  </section>
+
+  <!-- Process -->
+  <section id="process" class="process" data-process aria-labelledby="process-title" data-surface="dark">
+    <div class="process__head wrap">
+      <h2 id="process-title" class="section-title display">How a project runs</h2>
+      <div class="process__bar"><span data-process-bar></span></div>
+    </div>
+    <ol class="process__track" data-process-track>
+      {steps.map((s, i) => (
+        <li class="step">
+          <span class="step__num display">{i + 1}</span>
+          <h3 class="step__title display">{s.title}</h3>
+          <p class="step__time">{s.time}</p>
+          <p class="step__text">{s.text}</p>
+        </li>
+      ))}
+    </ol>
+  </section>
+</Base>
+
+<style>
+  /* Hero */
+  .hero { position: relative; min-height: 100svh; background: var(--ultra); color: #fff; overflow: hidden; display: flex; align-items: flex-end; }
+  .hero::after { content: ''; position: absolute; inset: 35% 0 0 0; background: linear-gradient(to top, rgb(46 43 255 / .85), rgb(46 43 255 / 0)); pointer-events: none; }
+  .hero__inner { position: relative; z-index: 1; width: 100%; display: grid; grid-template-columns: minmax(0, 1fr) minmax(16rem, 22rem); gap: 2rem; align-items: end; padding-bottom: clamp(2rem, 6vh, 4rem); pointer-events: none; }
+  .hero__title { margin: 0; font-size: clamp(3rem, 9.4vw, 10.5rem); max-width: 13ch; text-wrap: balance; }
+  .hero__aside { display: grid; gap: 1.5rem; justify-items: start; pointer-events: auto; padding: 1.25rem; margin: -1.25rem; border-radius: 16px; background: rgb(46 43 255 / .55); backdrop-filter: blur(6px); }
+  .hero__aside p { margin: 0; font-size: 1.1rem; }
+  @media (max-width: 820px) { .hero__inner { grid-template-columns: 1fr; } .hero { align-items: flex-end; } }
+
+  /* Statement */
+  .statement { padding-block: clamp(5rem, 14vw, 11rem); }
+  .statement p { margin: 0; max-width: 26ch; font: 500 clamp(1.8rem, 4.4vw, 4.2rem)/1.08 var(--display); font-stretch: 100%; letter-spacing: -.02em; text-wrap: balance; }
+
+  .section-title { font-size: clamp(2.8rem, 9vw, 9rem); margin: 0 0 clamp(2rem, 5vw, 4rem); }
+
+  /* Work */
+  .work { padding-bottom: clamp(5rem, 12vw, 10rem); }
+  .work__grid { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: clamp(2.5rem, 5vw, 4.5rem) clamp(1rem, 2.5vw, 2rem); }
+  .work__item--wide { grid-column: 1 / -1; }
+  .work__item a { display: block; text-decoration: none; }
+  .work__item--wide :global(.poster) { aspect-ratio: 16 / 7.5; }
+  .work__meta { display: grid; grid-template-columns: minmax(8rem, .6fr) 1fr auto; gap: .5rem 1.5rem; align-items: baseline; padding-top: 1rem; border-top: 1px solid var(--rule); margin-top: 1rem; }
+  .work__meta h3 { margin: 0; font: 700 1.35rem/1.2 var(--display); font-stretch: 120%; }
+  .work__meta p { margin: 0; }
+  .work__tags { color: var(--muted); font-size: .95rem; text-align: right; }
+  .work__tags span { margin-left: .75rem; color: var(--ink); }
+  .work__item:not(.work__item--wide) .work__meta { grid-template-columns: 1fr; }
+  .work__item:not(.work__item--wide) .work__tags { text-align: left; }
+  @media (max-width: 760px) {
+    .work__grid { grid-template-columns: 1fr; }
+    .work__item--wide :global(.poster) { aspect-ratio: 16 / 10; }
+    .work__meta { grid-template-columns: 1fr; }
+    .work__tags { text-align: left; }
+  }
+
+  /* Services */
+  .services { padding-bottom: clamp(5rem, 12vw, 10rem); }
+  .service { border-top: 1px solid var(--rule); }
+  .service:last-child { border-bottom: 1px solid var(--rule); }
+  .service summary { list-style: none; cursor: pointer; display: flex; justify-content: space-between; align-items: center; gap: 1rem; padding: clamp(1.1rem, 2.4vw, 1.8rem) 0; }
+  .service summary::-webkit-details-marker { display: none; }
+  .service__name { font-size: clamp(1.8rem, 4.6vw, 4.2rem); font-stretch: 90%; transition: font-stretch .5s var(--ease-out), color .3s; }
+  .service summary:hover .service__name, .service[open] .service__name { font-stretch: 125%; color: var(--ultra); }
+  .service__toggle { width: 1.6rem; height: 1.6rem; position: relative; flex: none; }
+  .service__toggle::before, .service__toggle::after { content: ''; position: absolute; inset: 50% 0 auto; height: 2px; background: currentColor; transition: rotate .4s var(--ease-out); }
+  .service__toggle::after { rotate: 90deg; }
+  .service[open] .service__toggle::after { rotate: 0deg; }
+  .service__body { display: grid; grid-template-columns: minmax(0, 1fr) minmax(12rem, 18rem); gap: 2rem; padding: 0 0 2rem; max-width: 64rem; }
+  .service__body p { margin: 0; font-size: 1.15rem; max-width: 52ch; }
+  .service__body ul { margin: 0; padding: 0; list-style: none; color: var(--muted); }
+  .service__body li { padding: .3rem 0; border-bottom: 1px solid var(--rule); }
+  @media (max-width: 700px) { .service__body { grid-template-columns: 1fr; } }
+
+  /* Process */
+  .process { background: var(--ink); color: var(--paper); padding-block: clamp(4rem, 9vw, 7rem); overflow: hidden; }
+  .process__head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: end; gap: 1.5rem; }
+  .process__head .section-title { margin-bottom: 0; color: var(--lilac); }
+  .process__bar { width: min(22rem, 100%); height: 3px; background: rgb(255 255 255 / .15); margin-bottom: 1.5rem; }
+  .process__bar span { display: block; height: 100%; background: var(--lilac); transform-origin: left; transform: scaleX(0); }
+  .process__track { list-style: none; margin: clamp(3rem, 6vw, 5rem) 0 0; padding: 0 var(--pad); display: flex; gap: clamp(1.5rem, 3vw, 3rem); width: max-content; }
+  .step { width: min(30rem, 78vw); padding: 2rem; border-radius: 22px; background: rgb(255 255 255 / .05); border: 1px solid rgb(255 255 255 / .1); display: grid; gap: .6rem; align-content: start; min-height: 24rem; }
+  .step__num { font-size: clamp(4rem, 8vw, 7rem); color: var(--ultra); font-stretch: 150%; line-height: .8; -webkit-text-stroke: 1.5px var(--lilac); color: transparent; }
+  .step__title { margin: 1.5rem 0 0; font-size: clamp(1.8rem, 3vw, 2.6rem); font-stretch: 115%; }
+  .step__time { margin: 0; color: var(--lilac); font-weight: 600; }
+  .step__text { margin: .5rem 0 0; color: rgb(238 240 244 / .78); max-width: 40ch; }
+  @media (max-width: 899px) {
+    .process__track { width: auto; flex-direction: column; }
+    .step { width: auto; min-height: 0; }
+    .process__bar { display: none; }
+  }
+</style>

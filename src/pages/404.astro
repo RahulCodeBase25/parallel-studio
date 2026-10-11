@@ -1,0 +1,13 @@
+---
+import Base from '../layouts/Base.astro'
+---
+<Base title="Page not found — Parallel">
+  <section class="nf" data-surface="dark">
+    <h1 class="display">This page went off in a different direction.</h1>
+    <a class="btn btn--light" href="/">Back to the studio</a>
+  </section>
+</Base>
+<style>
+  .nf { min-height: 100svh; background: var(--ultra); color: #fff; display: grid; align-content: center; gap: 2rem; padding: 6rem var(--pad); }
+  .nf h1 { margin: 0; font-size: clamp(2.6rem, 8vw, 7rem); max-width: 14ch; }
+</style>

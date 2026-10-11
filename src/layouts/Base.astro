@@ -1,0 +1,96 @@
+---
+import { ClientRouter } from 'astro:transitions'
+import '../styles/global.css'
+
+interface Props { title?: string; description?: string }
+const {
+  title = 'Parallel — product design studio',
+  description = 'Parallel designs and builds digital products: mobile apps, web platforms and dashboards for teams who care how things feel to use.',
+} = Astro.props
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <meta name="theme-color" content="#2e2bff" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Anybody:wdth,wght@50..150,400..900&family=Hanken+Grotesk:wght@400;500;600&display=swap" rel="stylesheet" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <ClientRouter />
+  </head>
+  <body>
+    <a class="skip visually-hidden" href="#main">Skip to content</a>
+    <header class="nav" data-on="dark" transition:persist>
+      <a href="/" class="nav__brand" aria-label="Parallel, home">
+        <svg viewBox="0 0 40 24" aria-hidden="true"><path d="M2 20 14 4M14 20 26 4M26 20 38 4" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" /></svg>
+        <span>Parallel</span>
+      </a>
+      <nav aria-label="Main">
+        <a href="/#work">Work</a>
+        <a href="/#services">Services</a>
+        <a href="/#process">Process</a>
+        <a href="/#contact" class="nav__cta">Start a project</a>
+      </nav>
+    </header>
+
+    <main id="main"><slot /></main>
+
+    <footer class="foot" id="contact" data-surface="dark">
+      <div class="wrap">
+        <p class="foot__lead">Have something to build?</p>
+        <a class="foot__mail display" href="https://rahul-dev-portfolio.vercel.app/contact" data-stretch>Let’s talk</a>
+        <div class="foot__grid">
+          <p>We take on four projects a quarter.<br />Next opening: January.</p>
+          <p>Dallas, Texas<br /><span data-clock>--:--</span> local time</p>
+          <p>Parallel is a made-up studio, built as a portfolio project by <a href="https://rahul-dev-portfolio.vercel.app" target="_blank" rel="noopener">Rahul Singh</a>. <a href="https://github.com/RahulCodeBase25/parallel-studio" target="_blank" rel="noopener">Source</a></p>
+        </div>
+      </div>
+    </footer>
+
+    <div class="cursor" aria-hidden="true"><span></span></div>
+
+    <script>
+      import { boot } from '../scripts/motion'
+      boot()
+    </script>
+  </body>
+</html>
+
+<style>
+  .nav {
+    position: fixed; inset: 0 0 auto 0; z-index: 50;
+    display: flex; align-items: center; justify-content: space-between; gap: 1rem;
+    padding: 1.1rem var(--pad);
+    color: var(--ink); transition: color .3s;
+  }
+  .nav[data-on='dark'] { color: #fff; }
+  .nav__brand { display: inline-flex; align-items: center; gap: .55rem; text-decoration: none; font: 700 1.25rem/1 var(--display); font-stretch: 125%; letter-spacing: -.01em; }
+  .nav__brand svg { width: 2.1rem; }
+  .nav nav { display: flex; align-items: center; gap: clamp(.75rem, 2.5vw, 2.25rem); font-weight: 500; }
+  .nav nav a { text-decoration: none; }
+  .nav nav a:hover { text-decoration: underline; text-underline-offset: 4px; }
+  .nav__cta { border: 1.5px solid currentColor; border-radius: 999px; padding: .5em 1em; }
+  @media (max-width: 640px) { .nav nav a:not(.nav__cta) { display: none; } }
+
+  .foot { background: var(--ultra); color: #fff; padding: clamp(5rem, 12vw, 9rem) 0 2.5rem; }
+  .foot__lead { font-size: clamp(1.1rem, 2vw, 1.4rem); margin: 0 0 1rem; opacity: .85; }
+  .foot__mail { display: block; text-decoration: none; font-size: clamp(2.2rem, 9.2vw, 9.5rem); overflow-wrap: anywhere; transition: font-stretch .6s var(--ease-out); }
+  .foot__grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr)); gap: 2rem; margin-top: clamp(3rem, 8vw, 6rem); padding-top: 1.5rem; border-top: 1px solid rgb(255 255 255 / .35); font-size: .95rem; }
+  .foot__grid p { margin: 0; opacity: .9; max-width: 32ch; }
+
+  .cursor { position: fixed; left: 0; top: 0; z-index: 60; pointer-events: none; }
+  .cursor span {
+    position: absolute; translate: -50% -50%; display: grid; place-items: center;
+    width: 14px; height: 14px; border-radius: 999px; background: #fff; mix-blend-mode: difference;
+    font: 600 .8rem/1 var(--body); color: var(--ink); white-space: nowrap;
+    transition: width .35s var(--ease-out), height .35s var(--ease-out), background-color .35s;
+  }
+  :global(html.cursor-label) .cursor span { width: 92px; height: 92px; background: var(--lilac); mix-blend-mode: normal; }
+  @media (hover: none), (prefers-reduced-motion: reduce) { .cursor { display: none; } }
+</style>
