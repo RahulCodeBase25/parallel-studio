@@ -2,7 +2,7 @@
 
 **A website for a (made-up) product design studio, built around one idea: the studio's name, drawn live.**
 
-Live: https://parallel-studio.vercel.app
+Live: https://parallel-rahul.vercel.app
 
 ![Parallel hero](docs/hero.png)
 
